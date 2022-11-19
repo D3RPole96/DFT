@@ -1,3 +1,6 @@
+import math
+
+
 class Matrix:
     def __init__(self, two_dimensional_list: [[]]):
         if len(two_dimensional_list) == 0:
@@ -33,7 +36,7 @@ class Matrix:
         return Matrix(new_matrix_list)
 
     def __mul__(self, other):
-        if other is not Matrix:
+        if not isinstance(other, Matrix):
             return self.__multiply_to_number(other)
 
         if self.get_matrix_dimensions()[1] != other.get_matrix_dimensions()[0]:
@@ -41,9 +44,9 @@ class Matrix:
         else:
             length = self.get_matrix_dimensions()[1]
 
-        new_matrix_list = [[0]] * other.get_matrix_dimensions()[1]
+        new_matrix_list = [[0]] * self.get_matrix_dimensions()[0]
         for i in range(len(new_matrix_list)):
-            new_matrix_list[i] = [0] * self.get_matrix_dimensions()[0]
+            new_matrix_list[i] = [0] * other.get_matrix_dimensions()[1]
 
         for row_index in range(self.get_matrix_dimensions()[0]):
             for column_index in range(other.get_matrix_dimensions()[1]):
@@ -71,3 +74,25 @@ class Matrix:
             raise ZeroDivisionError()
 
         return self.__multiply_to_number(1 / number)
+
+    def get_transposed_matrix(self):
+        new_matrix_list = [[0]] * self.__rows_len
+        for i in range(self.__rows_len):
+            new_matrix_list[i] = [0] * self.__columns_len
+
+        for row_index in range(self.__columns_len):
+            for column_index in range(self.__rows_len):
+                new_matrix_list[column_index][row_index] = self.matrix[row_index][column_index]
+
+        return Matrix(new_matrix_list)
+
+    def exp(self):
+        new_matrix_list = [[0]] * self.__columns_len
+        for i in range(self.__columns_len):
+            new_matrix_list[i] = [0] * self.__rows_len
+
+        for row_index in range(self.__columns_len):
+            for column_index in range(self.__rows_len):
+                new_matrix_list[row_index][column_index] = math.e ** self.matrix[row_index][column_index]
+
+        return Matrix(new_matrix_list)
