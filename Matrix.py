@@ -40,7 +40,7 @@ class Matrix:
             return self.__multiply_to_number(other)
 
         if self.get_matrix_dimensions()[1] != other.get_matrix_dimensions()[0]:
-            raise ValueError("Aaa")
+            raise ValueError("The number of columns of matrix A must be equal to the number of rows of B")
         else:
             length = self.get_matrix_dimensions()[1]
 

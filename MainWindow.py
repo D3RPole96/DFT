@@ -1,6 +1,5 @@
 import sys
 
-import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QApplication, QLineEdit, QHBoxLayout, QCheckBox, \
@@ -27,7 +26,7 @@ class MainWindow(QDialog):
 
         self.checkboxes = {}
         for key in AvailableFunctions.functions:
-            self.checkboxes[key] = QCheckBox(key, self)
+            self.checkboxes[key] = QRadioButton(key, self)
             self.checkboxes[key].setFixedHeight(18)
 
         self.dtf_button = QPushButton('DFT')
@@ -81,9 +80,6 @@ class MainWindow(QDialog):
     def draw_dft(self):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        colors = ['m', 'r', 'g', 'b']
-        thin = [0.3, 0.2, 0.1]
-        zorder = [2, 3, 4, 5]
 
         names = []
         functions_DFT = []
@@ -114,8 +110,7 @@ class MainWindow(QDialog):
             max_axis = max(max_axis, x_axis[-1])
 
         for i in range(len(names)):
-            ax.bar(x_axises[i], functions_DFT[i], 0.05 * (max_axis / 10), zorder=zorder.pop(),
-                   color=colors.pop(), label=names[i])
+            ax.bar(x_axises[i], functions_DFT[i], 0.05 * (max_axis / 10), zorder=2, label=names[i])
             ax.grid(zorder=1)
 
             ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
@@ -123,8 +118,6 @@ class MainWindow(QDialog):
             plt.setp(ax.get_xticklabels(), rotation=90, horizontalalignment='right')
 
             plt.xticks(x_axises[i])
-
-        # ax.legend()
 
         self.canvas.draw()
 
@@ -147,15 +140,19 @@ class MainWindow(QDialog):
             function_IDFT = function.get_IDFT(64) * periods_count
 
             x_axis = [function.period / (len(function_IDFT) / periods_count) * x for x in range(len(function_IDFT))]
+            x_axis_for_function = [function.period / (len(function_IDFT) / periods_count) * x for x in range(len(function_IDFT))]
 
-            ax.plot(x_axis, function_IDFT, 0.1, zorder=2, color=colors.pop(), label=name)
+            function_values = [function.function(x) for x in x_axis_for_function]
+
+            ax.plot(x_axis_for_function, function_values, 0.1, zorder=2, color=colors.pop(), label=name)
+            ax.plot(x_axis, function_IDFT, 0.1, zorder=2, color=colors.pop(), label=f"{name} (IDFT)")
             ax.grid(zorder=1)
 
             ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 
             plt.setp(ax.get_xticklabels(), rotation=90, horizontalalignment='right')
 
-        #ax.legend()
+        ax.legend()
 
         self.canvas.draw()
 
@@ -166,9 +163,7 @@ class MainWindow(QDialog):
         msgBox.setWindowTitle("Некорректный ввод")
         msgBox.setStandardButtons(QMessageBox.Ok)
 
-        returnValue = msgBox.exec()
-        if returnValue == QMessageBox.Ok:
-            print('OK clicked')
+        msgBox.exec()
 
 
 if __name__ == "__main__":

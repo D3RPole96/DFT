@@ -1,7 +1,6 @@
 from typing import Callable
 
 from DFT import DFT, IDFT
-from numpy import allclose
 
 class Function:
     def __init__(self, function: Callable[[float], float], period: float):
@@ -20,6 +19,12 @@ class Function:
         x = self.__get_values(signal_length)
 
         self.dft = DFT(x)
+
+        for i in range(len(self.dft) // 2):
+            if i / self.period > 1:
+                self.dft[i] = 0 + 0j
+                self.dft[signal_length - i - 1] = 0 + 0j
+
         values = []
 
         for value in self.dft[:len(self.dft) // 2 + 1]:
